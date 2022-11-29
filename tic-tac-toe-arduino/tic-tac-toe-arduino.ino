@@ -30,7 +30,7 @@ int winningSequences[8][3] = {
                             };
 
 
-byte pins_buttons[9] = {5,6,7,8,9,10,11,12,13};      // Lista de pinos digitais para os botões
+byte pins_buttons[9] = {13,12,11,10,9,8,7,6,5};      // Lista de pinos digitais para os botões
 byte pins_relay_x[9] = {14,15,16,17,18,19,20,21,22}; // pinos digitais para o relé da fita de led [X]
 byte pins_relay_o[9] = {23,24,25,26,27,28,29,30,31}; // pinos digitais para o relé da fita de led [O]
 
@@ -190,6 +190,8 @@ void loop() {
   // fazer a leitura de todos os botões
   // e retornar o index do botão precionado
   int buttonIndex = getButtonAction(); 
+
+  Serial.printl(buttonIndex);
   
   if(buttonIndex != -1 && !gameover){
       make_play(buttonIndex);
@@ -203,7 +205,7 @@ void loop() {
 
   // resetar o jogo
   if(gameover){
-    delay(2000); // esperar 2 segundos para reiniciar o jogo
+    delay(time_to_reset); // esperar 2 segundos para reiniciar o jogo
     reset();
 
     // mostrar o tabuleiro na Serial
