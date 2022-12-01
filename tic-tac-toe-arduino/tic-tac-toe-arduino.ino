@@ -190,8 +190,6 @@ void loop() {
   // fazer a leitura de todos os botões
   // e retornar o index do botão precionado
   int buttonIndex = getButtonAction(); 
-
-  Serial.printl(buttonIndex);
   
   if(buttonIndex != -1 && !gameover){
       make_play(buttonIndex);
