@@ -23,7 +23,7 @@ int winningSequences[8][3] = {
                               {3,4,5},
                               {6,7,8},
                               {0,3,6},
-                              {1,4,6},
+                              {1,4,7},
                               {2,5,8},
                               {0,4,8},
                               {2,4,6}
@@ -40,11 +40,11 @@ bool gameover = false;
 bool symbols  = 1;    // 1 para [X] & 0 para [O]
 
 
-#define effect1 32 // pino de efeito de vencedor ou perdedor 
+#define effect1 32 // pino de efeito de vencedor ou perdedor  
 #define effect2 33 // pino de efeito de vencedor ou perdedor 
 
 #define time_to_reset 2000   // delay para poder resetar o tabuleiro (milissegundos) --> 1s = 1000ms
-#define calibrate_button 100 // delay para calibrar a leitura dos botões
+#define calibrate_button 50 // delay para calibrar a leitura dos botões
 
 
 
@@ -95,10 +95,10 @@ void ledEffect(int position, bool symbols){
 }
 
 void winnerOrLoserEffect(int effects){
-  if(effects == 1){
+  if(effects == 0){
     digitalWrite(effect1, HIGH);
   }
-  else if(effects == 2){
+  else if(effects == 1){
     digitalWrite(effect2, HIGH);
   }
 }
@@ -110,7 +110,7 @@ void cleanLedEffect(int position){
     digitalWrite(pins_relay_x[position], LOW);   
 
     // desligar os leds de vencedor ou perdedor
-    digitalWrite(effect2, LOW); 
+    digitalWrite(effect1, LOW); 
     digitalWrite(effect2, LOW);
 }
 
