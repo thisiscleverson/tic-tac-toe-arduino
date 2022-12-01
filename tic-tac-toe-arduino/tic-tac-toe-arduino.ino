@@ -6,18 +6,15 @@
  repository: https://github.com/thisiscleverson/tic-tac-toe-arduino.git
 */
 
-//variáveis
 
-
-
-
-int board[9] = { // tabuleiro vazio
+// tabuleiro vazio
+int board[9] = { 
                 -1,-1,-1,
                 -1,-1,-1,
                 -1,-1,-1
                 }; 
 
-
+// sequências vencedoras
 int winningSequences[8][3] = {
                               {0,1,2},
                               {3,4,5},
@@ -34,22 +31,23 @@ byte pins_buttons[9] = {5,6,7,8,9,10,11,12,13};      // Lista de pinos digitais 
 byte pins_relay_x[9] = {14,15,16,17,18,19,20,21,22}; // pinos digitais para o relé da fita de led [X]
 byte pins_relay_o[9] = {23,24,25,26,27,28,29,30,31}; // pinos digitais para o relé da fita de led [O]
 
-bool active_piezo = true;
-bool debug        = true; // variável para mostrar todos os logs no serial monitor
-bool gameover     = false; 
-bool symbols      = 1;    // 1 para [X] & 0 para [O]
+
+bool active_piezo = true;  // variável para ativar e desativar o jogo 
+bool debug        = true;  // variável para mostrar todos os logs no serial monitor
+bool gameover     = false; // variável de gameover para resetar o jogo
+bool symbols      = 1;     // 1 para [X] & 0 para [O]
 
 
+#define piezo 3    // pino para o buzzer 
 #define effect1 32 // pino de efeito de vencedor ou perdedor  
 #define effect2 33 // pino de efeito de vencedor ou perdedor 
 
-#define time_to_reset 2000   // delay para poder resetar o tabuleiro (milissegundos) --> 1s = 1000ms
+#define time_to_reset 2000  // delay para poder resetar o tabuleiro (milissegundos) --> 1s = 1000ms
 #define calibrate_button 50 // delay para calibrar a leitura dos botões
 
-#define piezo 3
 
 //Funções
-bool change(){
+bool change(){ // função para mudar os simbolos para [x] ou [O]
   symbols = !symbols;
   return symbols;
 }
@@ -101,6 +99,7 @@ void ledEffect(int position, bool symbols){
   }
 }
 
+
 void winnerOrLoserEffect(int effects){
   if(effects == 0){
     digitalWrite(effect1, HIGH);
@@ -109,6 +108,7 @@ void winnerOrLoserEffect(int effects){
     digitalWrite(effect2, HIGH);
   }
 }
+
 
 void cleanLedEffect(int position){
 
@@ -143,7 +143,7 @@ void checkTie(){ // verificar empate
 }
 
 
-void reset(){
+void reset(){ // função para resetar o tabuleiro
   // limpar o tabuleiro  
   for(int i=0; i<9; i++){
     board[i] = -1;
@@ -181,11 +181,10 @@ void setup() {
     pinMode(pins_relay_o[i], OUTPUT); // pinos digitais do relé o
   };  
 
-  // definir os pinos de efeito de vencedor ou perdedor como saida
-  pinMode(effect1, OUTPUT);
-  pinMode(effect2, OUTPUT);
-  //definir o pino do buzzer como saida
-  pinMode(piezo,   OUTPUT);
+
+  pinMode(effect1, OUTPUT);  // definir o pino de efeito de vencedor ou perdedor como saida
+  pinMode(effect2, OUTPUT);  // definir o pino de efeito de vencedor ou perdedor como saida
+  pinMode(piezo,   OUTPUT);  // definir o pino do buzzer como saida
 
   // mostrar o tabuleiro no monitor serial
   if(debug){
