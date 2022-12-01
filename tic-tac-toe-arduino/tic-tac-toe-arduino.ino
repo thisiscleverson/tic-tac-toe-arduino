@@ -30,14 +30,14 @@ int winningSequences[8][3] = {
                             };
 
 
-byte pins_buttons[9] = {13,12,11,10,9,8,7,6,5};      // Lista de pinos digitais para os botões
+byte pins_buttons[9] = {5,6,7,8,9,10,11,12,13};      // Lista de pinos digitais para os botões
 byte pins_relay_x[9] = {14,15,16,17,18,19,20,21,22}; // pinos digitais para o relé da fita de led [X]
 byte pins_relay_o[9] = {23,24,25,26,27,28,29,30,31}; // pinos digitais para o relé da fita de led [O]
 
-
-bool debug    = true; // variável para mostrar todos os logs no serial monitor
-bool gameover = false; 
-bool symbols  = 1;    // 1 para [X] & 0 para [O]
+bool active_piezo = true;
+bool debug        = true; // variável para mostrar todos os logs no serial monitor
+bool gameover     = false; 
+bool symbols      = 1;    // 1 para [X] & 0 para [O]
 
 
 #define effect1 32 // pino de efeito de vencedor ou perdedor  
@@ -46,7 +46,7 @@ bool symbols  = 1;    // 1 para [X] & 0 para [O]
 #define time_to_reset 2000   // delay para poder resetar o tabuleiro (milissegundos) --> 1s = 1000ms
 #define calibrate_button 50 // delay para calibrar a leitura dos botões
 
-
+#define piezo 3
 
 //Funções
 bool change(){
@@ -68,10 +68,17 @@ int getButtonAction(){ // capturar qual botão foi precionado
 void make_play(int position){ // inserir o [X] ou [O] no tabuleiro
   bool symbols;
   int winningSequencesIndex;
+
   if(board[position] == -1){
     symbols = change();
     board[position] = symbols;
-    ledEffect(position, symbols);  
+    ledEffect(position, symbols);
+    //ativar/desativar o buzzer
+    if(active_piezo){
+      digitalWrite(piezo, HIGH);
+      delay(500);
+      digitalWrite(piezo, LOW);
+    }
   };
 
   winningSequencesIndex = checkWinningSequences(symbols); // verificar a sequência vencedora 
@@ -174,9 +181,11 @@ void setup() {
     pinMode(pins_relay_o[i], OUTPUT); // pinos digitais do relé o
   };  
 
-  // definir o pino de efeito de vencedor ou perdedor como saida
+  // definir os pinos de efeito de vencedor ou perdedor como saida
   pinMode(effect1, OUTPUT);
   pinMode(effect2, OUTPUT);
+  //definir o pino do buzzer como saida
+  pinMode(piezo,   OUTPUT);
 
   // mostrar o tabuleiro no monitor serial
   if(debug){
@@ -203,8 +212,11 @@ void loop() {
 
   // resetar o jogo
   if(gameover){
-    delay(time_to_reset); // esperar 2 segundos para reiniciar o jogo
-    reset();
+    //ativar o som de gamerover
+    active_piezo == true? digitalWrite(piezo, HIGH):  // operador ternario para ativar/desativar o buzzer    
+    delay(time_to_reset);                             // esperar 2 segundos para reiniciar o jogo
+    active_piezo == true? digitalWrite(piezo, LOW):   // operador ternario para ativar/desativar o buzzer  
+    reset();                                          // resetar o tabuleiro
 
     // mostrar o tabuleiro na Serial
     if(debug){
